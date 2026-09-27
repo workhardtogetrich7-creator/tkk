@@ -1,0 +1,130 @@
+<h2 class="sr-only">Интерактивная демонстрация Telegram-бота ТКК: кликните варианты ответов, чтобы пройти сценарий заявки</h2>
+<div style="max-width:360px;margin:0 auto;background:var(--surface-1);border-radius:12px;padding:1rem;">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:10px;border-bottom:0.5px solid var(--border);">
+<div style="width:28px;height:28px;border-radius:50%;background:var(--bg-accent);display:flex;align-items:center;justify-content:center;"><i class="ti ti-robot" style="font-size:16px;color:var(--text-accent);" aria-hidden="true"></i></div>
+<span style="font-size:14px;font-weight:500;">Бот мастерской ТКК</span>
+</div>
+<div id="chat" style="display:flex;flex-direction:column;gap:10px;min-height:60px;"></div>
+<div id="controls" style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;"></div>
+</div>
+<script>
+var chat = document.getElementById('chat');
+var controls = document.getElementById('controls');
+var state = 0;
+var data = {};
+
+function bubble(text, from){
+  var d = document.createElement('div');
+  var align = from === 'bot' ? 'flex-start' : 'flex-end';
+  var bg = from === 'bot' ? 'var(--surface-2)' : 'var(--fill-accent)';
+  var color = from === 'bot' ? 'var(--text-primary)' : 'var(--on-accent)';
+  var border = from === 'bot' ? 'border:0.5px solid var(--border);' : '';
+  var radius = from === 'bot' ? '12px 12px 12px 2px' : '12px 12px 2px 12px';
+  d.style.cssText = 'align-self:'+align+';max-width:80%;background:'+bg+';'+border+'border-radius:'+radius+';padding:8px 12px;';
+  var p = document.createElement('p');
+  p.style.cssText = 'margin:0;font-size:14px;color:'+color+';';
+  p.textContent = text;
+  d.appendChild(p);
+  chat.appendChild(d);
+}
+
+function clearControls(){ controls.innerHTML = ''; }
+
+function addOption(label, handler){
+  var b = document.createElement('button');
+  b.textContent = label;
+  b.style.cssText = 'font-size:13px;padding:6px 12px;';
+  b.onclick = handler;
+  controls.appendChild(b);
+}
+
+function step0(){
+  bubble('Здравствуйте! Я бот мастерской ТКК. Какой тип памятника вас интересует?', 'bot');
+  clearControls();
+  addOption('Вертикальный', function(){ choose('Вертикальный'); });
+  addOption('Горизонтальный', function(){ choose('Горизонтальный'); });
+  addOption('С ангелом', function(){ choose('С ангелом'); });
+}
+
+function choose(type){
+  data.type = type;
+  bubble(type, 'user');
+  step1();
+}
+
+function step1(){
+  bubble('Из какого камня — гранит или мрамор?', 'bot');
+  clearControls();
+  addOption('Гранит', function(){ chooseMaterial('Гранит'); });
+  addOption('Мрамор', function(){ chooseMaterial('Мрамор'); });
+}
+
+function chooseMaterial(m){
+  data.material = m;
+  bubble(m, 'user');
+  step2();
+}
+
+function step2(){
+  bubble('Нужна установка на кладбище?', 'bot');
+  clearControls();
+  addOption('Да, нужна', function(){ chooseInstall(true); });
+  addOption('Нет, заберу сам', function(){ chooseInstall(false); });
+}
+
+function chooseInstall(v){
+  data.install = v;
+  bubble(v ? 'Да, нужна' : 'Нет, заберу сам', 'user');
+  step3();
+}
+
+function step3(){
+  var price = data.material === 'Гранит' ? '32 000' : '24 000';
+  var extra = data.install ? ' Рассрочка на 6 мес. без переплаты.' : '';
+  bubble('Предварительный расчёт: от '+price+' руб.'+extra+' Оставьте телефон, чтобы менеджер связался.', 'bot');
+  clearControls();
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;gap:6px;width:100%;';
+  var input = document.createElement('input');
+  input.type = 'tel';
+  input.placeholder = '+7 999 123-45-67';
+  input.style.cssText = 'flex:1;';
+  var btn = document.createElement('button');
+  btn.textContent = 'Отправить';
+  btn.onclick = function(){
+    var err = document.getElementById('phone-err');
+    if(err) err.remove();
+    if(!input.value.trim()){
+      var e = document.createElement('p');
+      e.id = 'phone-err';
+      e.style.cssText = 'font-size:13px;color:var(--text-danger);margin:4px 0 0;width:100%;';
+      e.textContent = 'Введите номер телефона';
+      controls.appendChild(e);
+      return;
+    }
+    bubble(input.value.trim(), 'user');
+    finish();
+  };
+  wrap.appendChild(input);
+  wrap.appendChild(btn);
+  controls.appendChild(wrap);
+}
+
+function finish(){
+  clearControls();
+  var d = document.createElement('div');
+  d.style.cssText = 'align-self:flex-start;max-width:85%;background:var(--bg-success);border-radius:12px 12px 12px 2px;padding:8px 12px;';
+  var p = document.createElement('p');
+  p.style.cssText = 'margin:0;font-size:14px;color:var(--text-success);';
+  p.textContent = 'Заявка принята. Менеджер свяжется в течение часа.';
+  d.appendChild(p);
+  chat.appendChild(d);
+  var note = document.createElement('button');
+  note.textContent = 'Пройти заново';
+  note.style.cssText = 'font-size:13px;padding:6px 12px;';
+  note.onclick = function(){ chat.innerHTML=''; data={}; step0(); };
+  controls.appendChild(note);
+}
+
+step0();
+</script>
