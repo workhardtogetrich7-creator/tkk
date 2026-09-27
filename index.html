@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Мастерская ТКК</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+  :root {
+    --bg: #f4f1ea; --bg-veil: #ece7dc; --panel: #fbfaf7; --panel-2: #f0ece2;
+    --ink: #23252b; --ink-soft: #5a5c63; --ink-faint: #8a8b90;
+    --gold: #9a7826; --gold-soft: #b9954a; --line: #dcd6c8; --line-strong: #c7bfab;
+    --shadow: 0 1px 2px rgba(40,36,26,.06), 0 8px 24px rgba(40,36,26,.06);
+    --ok: #4a6b3f; --ok-bg: #e7eede; --warn: #8a6a1f; --warn-bg: #f3e9cf;
+    --info: #3a5a78; --info-bg: #e0e9f1; --mute: #6a6c72; --mute-bg: #e8e6df;
+    --danger: #9a3b32; --danger-bg: #f3ddd9;
+    --font-head: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --font-body: "PT Sans", -apple-system, Segoe UI, Roboto, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e0f12; --bg-veil: #14161b; --panel: #171a20; --panel-2: #1d2027;
+      --ink: #d3d7dd; --ink-soft: #a3a8b1; --ink-faint: #71767f;
+      --gold: #d0aa54; --gold-soft: #e0be6e; --line: #2a2e36; --line-strong: #383d47;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+      --ok: #9dc389; --ok-bg: #1e281a; --warn: #e0be6e; --warn-bg: #2c2410;
+      --info: #8fb6d8; --info-bg: #14222e; --mute: #9aa0a9; --mute-bg: #23262d;
+      --danger: #e0938a; --danger-bg: #2c1815; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e0f12; --bg-veil: #14161b; --panel: #171a20; --panel-2: #1d2027;
+    --ink: #d3d7dd; --ink-soft: #a3a8b1; --ink-faint: #71767f;
+    --gold: #d0aa54; --gold-soft: #e0be6e; --line: #2a2e36; --line-strong: #383d47;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+    --ok: #9dc389; --ok-bg: #1e281a; --warn: #e0be6e; --warn-bg: #2c2410;
+    --info: #8fb6d8; --info-bg: #14222e; --mute: #9aa0a9; --mute-bg: #23262d;
+    --danger: #e0938a; --danger-bg: #2c1815; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 16px; padding-block: 16px 64px; }
+
+  /* Top auth bar */
+  .authbar { display: flex; align-items: center; justify-content: flex-end; gap: 10px; font-size: 13px; color: var(--ink-soft); min-height: 34px; flex-wrap: wrap; }
+  .authbar .who { display: inline-flex; align-items: center; gap: 6px; }
+  .authbar .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+
+  .masthead { text-align: center; padding-block: 6px 4px; }
+  .kicker { text-transform: uppercase; letter-spacing: .28em; font-size: 11px; font-weight: 700; color: var(--gold); }
+  .title { font-family: var(--font-head); font-weight: 700; font-size: clamp(34px, 7vw, 52px); line-height: 1.02; margin: 6px 0 2px; letter-spacing: .01em; text-wrap: balance; }
+  .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0; }
+  .rule { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 16px auto 22px; max-width: 340px; color: var(--gold-soft); }
+  .rule::before, .rule::after { content: ""; height: 1px; flex: 1; background: linear-gradient(90deg, transparent, var(--line-strong)); }
+  .rule::after { background: linear-gradient(270deg, transparent, var(--line-strong)); }
+  .rule svg { flex: none; opacity: .9; }
+
+  .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+  .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 16px 18px; box-shadow: var(--shadow); position: relative; }
+  .tile::after { content: ""; position: absolute; inset: 4px; border: 1px solid var(--line); border-radius: 2px; pointer-events: none; }
+  .tile .lbl { text-transform: uppercase; letter-spacing: .12em; font-size: 10.5px; font-weight: 700; color: var(--ink-faint); }
+  .tile .val { font-family: var(--font-head); font-weight: 600; font-size: 34px; line-height: 1.1; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .tile .val.money { font-size: 28px; }
+  .tile .val .cur { font-size: 16px; color: var(--ink-soft); font-family: var(--font-body); }
+
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line-strong); margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { appearance: none; background: none; border: none; font-family: var(--font-head); font-size: 21px; font-weight: 600; color: var(--ink-faint); padding: 8px 16px 12px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .15s; }
+  .tab:hover { color: var(--ink-soft); }
+  .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--gold); }
+  .tab .cnt { font-family: var(--font-body); font-size: 12px; color: var(--ink-faint); font-weight: 700; margin-left: 6px; }
+
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+  .search { position: relative; flex: 1 1 220px; min-width: 0; }
+  .search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--ink-faint); }
+  input, select, textarea { font-family: var(--font-body); font-size: 14px; color: var(--ink); background: var(--panel); border: 1px solid var(--line-strong); border-radius: 4px; padding: 8px 10px; width: 100%; }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold-soft); outline-offset: 1px; border-color: var(--gold-soft); }
+  .search input { padding-left: 32px; }
+  .toolbar .filter { flex: 0 0 auto; width: auto; min-width: 150px; }
+  .spacer { flex: 1; }
+  .btn { appearance: none; font-family: var(--font-body); font-size: 14px; font-weight: 700; border-radius: 4px; padding: 8px 16px; cursor: pointer; border: 1px solid var(--line-strong); background: var(--panel); color: var(--ink); white-space: nowrap; transition: background .15s, border-color .15s; }
+  .btn:hover { border-color: var(--gold-soft); }
+  .btn.primary { background: var(--gold); border-color: var(--gold); color: #fff; }
+  .btn.primary:hover { background: var(--gold-soft); }
+  .btn.ghost { background: transparent; border-color: transparent; color: var(--gold); padding: 8px 10px; }
+  .btn.ghost:hover { background: var(--panel-2); }
+  .btn.danger { color: var(--danger); border-color: transparent; background: transparent; }
+  .btn.danger:hover { background: var(--danger-bg); }
+  .btn.sm { padding: 5px 10px; font-size: 12.5px; }
+
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  thead th { text-align: left; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: 10.5px; color: var(--ink-faint); padding: 11px 12px; white-space: nowrap; border-bottom: 1px solid var(--line-strong); background: var(--panel-2); position: sticky; top: 0; cursor: pointer; user-select: none; }
+  thead th.nosort { cursor: default; }
+  thead th .arw { color: var(--gold); margin-left: 3px; }
+  tbody td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--bg-veil); }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.actions { white-space: nowrap; text-align: right; }
+  tr.overdue td { box-shadow: inset 2px 0 0 var(--danger); }
+  .primary-cell { font-weight: 700; color: var(--ink); }
+  .sub-cell { color: var(--ink-faint); font-size: 12px; }
+
+  .chip { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+  .chip.ok { color: var(--ok); background: var(--ok-bg); }
+  .chip.warn { color: var(--warn); background: var(--warn-bg); }
+  .chip.info { color: var(--info); background: var(--info-bg); }
+  .chip.mute { color: var(--mute); background: var(--mute-bg); }
+  .chip.danger { color: var(--danger); background: var(--danger-bg); }
+  .yes { color: var(--ok); font-weight: 700; }
+  .no { color: var(--ink-faint); }
+
+  .state { text-align: center; padding: 54px 20px; color: var(--ink-soft); }
+  .state .ico { color: var(--gold-soft); margin-bottom: 10px; }
+  .state h3 { font-family: var(--font-head); font-size: 24px; font-weight: 600; margin: 0 0 4px; color: var(--ink); }
+  .state p { margin: 0 auto; max-width: 400px; font-size: 14px; }
+  .state .btn { margin-top: 16px; }
+
+  .scrim { position: fixed; inset: 0; background: rgba(20,18,12,.45); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 40; }
+  .scrim.open { opacity: 1; pointer-events: auto; }
+  .drawer { position: fixed; top: 0; right: 0; height: 100%; width: min(440px, 100%); background: var(--panel); border-left: 1px solid var(--line-strong); transform: translateX(100%); transition: transform .24s ease; z-index: 50; display: flex; flex-direction: column; box-shadow: -12px 0 40px rgba(0,0,0,.18); }
+  .drawer.open { transform: translateX(0); }
+  .drawer header { padding: 18px 20px 14px; border-bottom: 1px solid var(--line); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .drawer header h2 { font-family: var(--font-head); font-weight: 600; font-size: 26px; margin: 0; line-height: 1.05; }
+  .drawer header p { margin: 2px 0 0; font-size: 12.5px; color: var(--ink-faint); }
+  .drawer .body { padding: 16px 20px; overflow-y: auto; flex: 1; }
+  .drawer footer { padding: 14px 20px; border-top: 1px solid var(--line); display: flex; gap: 10px; align-items: center; }
+  .field { margin-bottom: 14px; }
+  .field > label { display: block; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); margin-bottom: 5px; }
+  .field .hint { font-size: 11.5px; color: var(--ink-faint); margin-top: 4px; }
+  .checkrow { display: flex; gap: 16px; flex-wrap: wrap; }
+  .checkrow label { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--ink); cursor: pointer; }
+  .checkrow input { width: auto; }
+  .switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+  .switch input { width: auto; }
+  .balance-note { background: var(--panel-2); border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; font-size: 13px; }
+  .balance-note b { font-variant-numeric: tabular-nums; }
+  .iconbtn { appearance: none; border: none; background: none; color: var(--ink-faint); cursor: pointer; padding: 4px; border-radius: 4px; line-height: 0; }
+  .iconbtn:hover { color: var(--ink); background: var(--panel-2); }
+
+  /* Login modal */
+  .login { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 60; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .login.open { opacity: 1; pointer-events: auto; }
+  .login .card { background: var(--panel); border: 1px solid var(--line-strong); border-radius: 6px; box-shadow: var(--shadow); width: min(380px, 100%); padding: 26px 24px; position: relative; }
+  .login .card::after { content: ""; position: absolute; inset: 5px; border: 1px solid var(--line); border-radius: 3px; pointer-events: none; }
+  .login h2 { font-family: var(--font-head); font-weight: 600; font-size: 28px; margin: 0 0 2px; }
+  .login p { margin: 0 0 18px; font-size: 13px; color: var(--ink-soft); }
+  .login .field { margin-bottom: 14px; }
+  .login .err { color: var(--danger); font-size: 13px; margin: 0 0 12px; min-height: 0; }
+  .login .row { display: flex; gap: 10px; align-items: center; margin-top: 4px; }
+
+  .theme-toggle { position: fixed; bottom: 16px; right: 16px; z-index: 30; }
+  .theme-toggle .btn { border-radius: 999px; box-shadow: var(--shadow); padding: 9px 12px; }
+
+  @media (max-width: 720px) {
+    .summary { grid-template-columns: 1fr; }
+    thead { display: none; }
+    table, tbody, tr, td { display: block; width: 100%; }
+    .tablewrap { overflow: visible; border: none; box-shadow: none; background: none; }
+    tbody tr { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; box-shadow: var(--shadow); margin-bottom: 12px; padding: 6px 4px 8px; }
+    tbody tr:hover { background: var(--panel); }
+    tbody td { border-bottom: 1px dotted var(--line); padding: 7px 14px; display: flex; justify-content: space-between; gap: 14px; text-align: right; }
+    tbody td::before { content: attr(data-label); font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-faint); text-align: left; flex: none; }
+    tbody td.actions { justify-content: flex-end; }
+    tbody td.actions::before { content: ""; }
+    tr.overdue td { box-shadow: none; }
+    tr.overdue { border-left: 3px solid var(--danger); }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="authbar" id="authbar"></div>
+
+  <header class="masthead">
+    <div class="kicker">Мастерская памятников</div>
+    <h1 class="title">ТКК</h1>
+    <p class="subtitle" id="subtitle">Каталог памятников · цены · рабочий журнал</p>
+    <div class="rule" aria-hidden="true">
+      <svg width="26" height="12" viewBox="0 0 26 12" fill="none">
+        <path d="M1 6h7M18 6h7" stroke="currentColor" stroke-width="1"/>
+        <path d="M13 1l3 5-3 5-3-5 3-5z" stroke="currentColor" stroke-width="1" fill="none"/>
+      </svg>
+    </div>
+  </header>
+
+  <section class="summary" id="summary" aria-label="Сводка" hidden>
+    <div class="tile"><div class="lbl">Новые заявки</div><div class="val" id="sum-leads">—</div></div>
+    <div class="tile"><div class="lbl">Заказы в работе</div><div class="val" id="sum-orders">—</div></div>
+    <div class="tile"><div class="lbl">Долг по оплатам</div><div class="val money" id="sum-debt">—</div></div>
+  </section>
+
+  <div class="tabs" role="tablist" id="tabs"></div>
+
+  <div class="toolbar">
+    <div class="search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M21 21l-4-4" stroke="currentColor" stroke-width="1.8"/></svg>
+      <input id="search" type="search" placeholder="Поиск…" autocomplete="off" aria-label="Поиск">
+    </div>
+    <select id="filter" class="filter" aria-label="Фильтр"></select>
+    <div class="spacer"></div>
+    <button class="btn primary" id="add-btn" hidden><span aria-hidden="true">＋</span> <span id="add-label">Добавить</span></button>
+  </div>
+
+  <div class="tablewrap">
+    <table id="table"><thead id="thead"></thead><tbody id="tbody"></tbody></table>
+    <div class="state" id="state" hidden></div>
+  </div>
+</div>
+
+<div class="theme-toggle"><button class="btn" id="theme-btn" aria-label="Сменить тему">◐ Тема</button></div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+  <header>
+    <div><h2 id="drawer-title">Запись</h2><p id="drawer-sub"></p></div>
+    <button class="iconbtn" id="drawer-close" aria-label="Закрыть"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8"/></svg></button>
+  </header>
+  <div class="body" id="drawer-body"></div>
+  <footer>
+    <button class="btn primary" id="save-btn">Сохранить</button>
+    <button class="btn" id="cancel-btn">Отмена</button>
+    <div class="spacer"></div>
+    <button class="btn danger" id="delete-btn" hidden>Удалить</button>
+  </footer>
+</aside>
+
+<div class="login" id="login" role="dialog" aria-modal="true" aria-labelledby="login-title">
+  <form class="card" id="login-form" autocomplete="on">
+    <h2 id="login-title">Вход для сотрудников</h2>
+    <p>Заявки и заказы доступны только сотрудникам мастерской.</p>
+    <div class="field"><label for="login-email">Email</label><input id="login-email" type="email" autocomplete="username" required></div>
+    <div class="field"><label for="login-pass">Пароль</label><input id="login-pass" type="password" autocomplete="current-password" required></div>
+    <p class="err" id="login-err"></p>
+    <div class="row">
+      <button class="btn primary" type="submit" id="login-submit">Войти</button>
+      <button class="btn" type="button" id="login-cancel">Отмена</button>
+    </div>
+  </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+"use strict";
+
+/* ============================================================
+   НАСТРОЙКА SUPABASE — впишите два значения из вашего проекта.
+   Project URL и anon public key: Supabase → Project Settings → API.
+   anon-ключ можно держать в коде: данные защищает Row Level Security.
+   ============================================================ */
+const SUPABASE_URL = "https://rjurusfnpiuwprnazlnh.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqdXJ1c2ZucGl1d3BybmF6bG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1MTY1NjIsImV4cCI6MjEwNjA5MjU2Mn0.h1779aXIT7SGadkMoZ2OhA4xmPEbLvSPto6rgDZnHD0";
+
+/* ---------- Справочники ---------- */
+const TYPES = ["Вертикальный", "Горизонтальный", "С ангелом"];
+const MATERIALS = ["Гранит", "Мрамор"];
+const SOURCES = ["Бот", "Звонок", "Визит"];
+const LEAD_STATUS = ["Новая", "В работе", "Перезвонить", "Отказ", "Переведена в заказ"];
+const ORDER_STAGE = ["Договор", "Эскиз согласован", "Камень в работе", "Гравировка", "Готов", "Установлен"];
+const ENGRAVING = ["Портрет", "Текст", "Эпитафия"];
+const STATUS_CHIP = { "Новая": "info", "В работе": "warn", "Перезвонить": "warn", "Отказ": "mute", "Переведена в заказ": "ok" };
+const STAGE_CHIP = { "Договор": "info", "Эскиз согласован": "info", "Камень в работе": "warn", "Гравировка": "warn", "Готов": "ok", "Установлен": "mute" };
+
+function fmtMoney(n) { return (Number(n) || 0).toLocaleString("ru-RU"); }
+function fmtDate(s) { if (!s) return ""; const d = new Date(s + "T00:00:00"); return isNaN(d) ? s : d.toLocaleDateString("ru-RU", { day: "2-digit", month: "short", year: "numeric" }); }
+function today() { return new Date().toISOString().slice(0, 10); }
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function chip(t, c) { return t ? `<span class="chip ${c}">${esc(t)}</span>` : ""; }
+function balanceOf(r) { return Math.max(0, (Number(r.total) || 0) - (Number(r.prepaid) || 0)); }
+function isOverdue(r) { return r.deadline && r.stage !== "Установлен" && r.deadline < today(); }
+
+const SCHEMAS = {
+  leads: {
+    title: "Заявки", singular: "Заявку", staff: true,
+    filterField: "status", filterLabel: "Все статусы", filterOptions: LEAD_STATUS,
+    empty: { h: "Заявок пока нет", p: "Добавьте заявку вручную или дождитесь, когда её пришлёт Telegram-бот." },
+    fields: [
+      { k: "date", label: "Дата", type: "date", def: today },
+      { k: "client", label: "Клиент", type: "text", required: true, placeholder: "Имя клиента" },
+      { k: "phone", label: "Телефон", type: "tel", placeholder: "+7 999 123-45-67" },
+      { k: "type", label: "Тип памятника", type: "select", options: TYPES },
+      { k: "material", label: "Камень", type: "select", options: MATERIALS },
+      { k: "install", label: "Установка на кладбище", type: "bool" },
+      { k: "estimate", label: "Предв. расчёт, ₽", type: "number" },
+      { k: "source", label: "Источник", type: "select", options: SOURCES, def: () => "Звонок" },
+      { k: "status", label: "Статус", type: "select", options: LEAD_STATUS, def: () => "Новая" },
+      { k: "manager", label: "Менеджер", type: "text" },
+      { k: "note", label: "Комментарий", type: "textarea" }
+    ],
+    columns: [
+      { k: "date", label: "Дата", num: true, render: r => fmtDate(r.date), sort: r => r.date || "" },
+      { k: "client", label: "Клиент", render: r => `<span class="primary-cell">${esc(r.client)}</span>${r.phone ? `<div class="sub-cell">${esc(r.phone)}</div>` : ""}`, sort: r => (r.client || "").toLowerCase() },
+      { k: "type", label: "Памятник", render: r => `${esc(r.type || "")}${r.material ? `<div class="sub-cell">${esc(r.material)}</div>` : ""}`, sort: r => r.type || "" },
+      { k: "install", label: "Уст.", render: r => r.install ? `<span class="yes">да</span>` : `<span class="no">—</span>`, sort: r => r.install ? 1 : 0 },
+      { k: "estimate", label: "Расчёт, ₽", num: true, render: r => r.estimate ? fmtMoney(r.estimate) : "—", sort: r => Number(r.estimate) || 0 },
+      { k: "source", label: "Источник", render: r => esc(r.source || ""), sort: r => r.source || "" },
+      { k: "status", label: "Статус", render: r => chip(r.status, STATUS_CHIP[r.status] || "mute"), sort: r => LEAD_STATUS.indexOf(r.status) }
+    ]
+  },
+  orders: {
+    title: "Заказы", singular: "Заказ", staff: true,
+    filterField: "stage", filterLabel: "Все этапы", filterOptions: ORDER_STAGE,
+    empty: { h: "Заказов пока нет", p: "Заведите заказ вручную или переведите его из заявки кнопкой «→ Заказ»." },
+    fields: [
+      { k: "contract", label: "№ договора", type: "text", placeholder: "напр. 2026-118" },
+      { k: "date", label: "Дата договора", type: "date", def: today },
+      { k: "client", label: "Клиент", type: "text", required: true },
+      { k: "phone", label: "Телефон", type: "tel" },
+      { k: "deceased", label: "ФИО усопшего", type: "text" },
+      { k: "lifespan", label: "Даты жизни", type: "text", placeholder: "1948 – 2025" },
+      { k: "model", label: "Модель (из каталога)", type: "catalog" },
+      { k: "material", label: "Камень", type: "select", options: MATERIALS },
+      { k: "size", label: "Размер", type: "text", placeholder: "100×50×8 см" },
+      { k: "engraving", label: "Гравировка", type: "checks", options: ENGRAVING },
+      { k: "cemetery", label: "Кладбище и участок", type: "text" },
+      { k: "install", label: "Установка", type: "bool" },
+      { k: "total", label: "Сумма, ₽", type: "number" },
+      { k: "prepaid", label: "Предоплата, ₽", type: "number" },
+      { k: "balance", label: "Остаток", type: "balance" },
+      { k: "installment", label: "Рассрочка, мес.", type: "number" },
+      { k: "stage", label: "Этап", type: "select", options: ORDER_STAGE, def: () => "Договор" },
+      { k: "deadline", label: "Срок", type: "date" },
+      { k: "note", label: "Комментарий", type: "textarea" }
+    ],
+    columns: [
+      { k: "contract", label: "Договор", render: r => `<span class="primary-cell">${esc(r.contract || "—")}</span><div class="sub-cell">${fmtDate(r.date)}</div>`, sort: r => r.contract || "" },
+      { k: "client", label: "Клиент", render: r => `${esc(r.client)}${r.deceased ? `<div class="sub-cell">усопш.: ${esc(r.deceased)}</div>` : ""}`, sort: r => (r.client || "").toLowerCase() },
+      { k: "model", label: "Модель", render: r => `${esc(r.model || "—")}${r.material ? `<div class="sub-cell">${esc(r.material)}</div>` : ""}`, sort: r => r.model || "" },
+      { k: "total", label: "Сумма, ₽", num: true, render: r => fmtMoney(r.total), sort: r => Number(r.total) || 0 },
+      { k: "balance", label: "Остаток, ₽", num: true, render: r => { const b = balanceOf(r); return b > 0 ? `<b style="color:var(--danger)">${fmtMoney(b)}</b>` : `<span class="yes">оплачен</span>`; }, sort: r => balanceOf(r) },
+      { k: "stage", label: "Этап", render: r => chip(r.stage, STAGE_CHIP[r.stage] || "mute"), sort: r => ORDER_STAGE.indexOf(r.stage) },
+      { k: "deadline", label: "Срок", num: true, render: r => { if (!r.deadline) return "—"; const od = isOverdue(r); return `<span${od ? ' style="color:var(--danger);font-weight:700"' : ""}>${fmtDate(r.deadline)}</span>`; }, sort: r => r.deadline || "9999" }
+    ],
+    rowClass: r => isOverdue(r) ? "overdue" : ""
+  },
+  catalog: {
+    title: "Каталог", singular: "Позицию", staff: false,
+    filterField: "material", filterLabel: "Весь камень", filterOptions: MATERIALS,
+    empty: { h: "Каталог пуст", p: "Добавьте модели памятников с ценами — они появятся в выборе при создании заказа." },
+    fields: [
+      { k: "sku", label: "Артикул", type: "text", required: true, placeholder: "ВГ-001" },
+      { k: "type", label: "Тип", type: "select", options: TYPES },
+      { k: "material", label: "Камень", type: "select", options: MATERIALS },
+      { k: "size", label: "Размер стелы", type: "text", placeholder: "100×50×8 см" },
+      { k: "price", label: "Базовая цена, ₽", type: "number" },
+      { k: "install_price", label: "Цена установки, ₽", type: "number" },
+      { k: "in_stock", label: "В наличии", type: "bool", def: () => true }
+    ],
+    columns: [
+      { k: "sku", label: "Артикул", render: r => `<span class="primary-cell">${esc(r.sku)}</span>`, sort: r => r.sku || "" },
+      { k: "type", label: "Тип", render: r => esc(r.type || ""), sort: r => r.type || "" },
+      { k: "material", label: "Камень", render: r => esc(r.material || ""), sort: r => r.material || "" },
+      { k: "size", label: "Размер", render: r => esc(r.size || ""), sort: r => r.size || "" },
+      { k: "price", label: "Цена, ₽", num: true, render: r => fmtMoney(r.price), sort: r => Number(r.price) || 0 },
+      { k: "install_price", label: "Установка, ₽", num: true, render: r => r.install_price ? fmtMoney(r.install_price) : "—", sort: r => Number(r.install_price) || 0 },
+      { k: "in_stock", label: "Наличие", render: r => r.in_stock ? chip("В наличии", "ok") : chip("Под заказ", "mute"), sort: r => r.in_stock ? 1 : 0 }
+    ]
+  }
+};
+const TAB_ORDER = ["leads", "orders", "catalog"];
+
+/* ---------- Состояние ---------- */
+const store = { leads: [], orders: [], catalog: [] };
+let activeTab = "catalog";
+let sortState = {};
+let searchText = "";
+let filterVal = "";
+let sb = null;
+let session = null;
+let editing = null;
+let formEngraving = [];
+let currentPreset = null;
+
+const $ = id => document.getElementById(id);
+const tabsEl = $("tabs"), theadEl = $("thead"), tbodyEl = $("tbody"), stateEl = $("state");
+const searchEl = $("search"), filterEl = $("filter"), addBtn = $("add-btn"), addLabel = $("add-label");
+
+const isStaff = () => !!session;                 // вошёл сотрудник
+const canWrite = () => !!session;                // писать может только вошедший
+const visibleTabs = () => isStaff() ? TAB_ORDER : ["catalog"];
+
+/* ---------- Auth-панель ---------- */
+function renderAuthbar() {
+  const bar = $("authbar");
+  if (isStaff()) {
+    const email = session.user && session.user.email ? session.user.email : "сотрудник";
+    bar.innerHTML = `<span class="who"><span class="dot"></span>${esc(email)}</span> <button class="btn sm" id="logout-btn">Выйти</button>`;
+    $("logout-btn").onclick = doLogout;
+  } else {
+    bar.innerHTML = `<span>Публичный каталог</span> <button class="btn sm" id="login-open">Вход для сотрудников</button>`;
+    $("login-open").onclick = openLogin;
+  }
+}
+
+/* ---------- Вкладки / фильтр / сводка ---------- */
+function renderTabs() {
+  tabsEl.innerHTML = "";
+  visibleTabs().forEach(t => {
+    const s = SCHEMAS[t];
+    const b = document.createElement("button");
+    b.className = "tab"; b.setAttribute("role", "tab");
+    b.setAttribute("aria-selected", String(t === activeTab));
+    b.innerHTML = `${s.title}<span class="cnt">${store[t].length || ""}</span>`;
+    b.onclick = () => { activeTab = t; searchText = ""; filterVal = ""; searchEl.value = ""; renderAll(); };
+    tabsEl.appendChild(b);
+  });
+}
+function renderFilter() {
+  const s = SCHEMAS[activeTab];
+  filterEl.innerHTML = `<option value="">${s.filterLabel}</option>` + s.filterOptions.map(o => `<option value="${esc(o)}">${esc(o)}</option>`).join("");
+  filterEl.value = filterVal;
+  addLabel.textContent = s.singular;
+}
+function renderSummary() {
+  const on = isStaff();
+  $("summary").hidden = !on;
+  if (!on) return;
+  $("sum-leads").textContent = store.leads.filter(r => r.status === "Новая").length;
+  $("sum-orders").textContent = store.orders.filter(r => r.stage && r.stage !== "Установлен").length;
+  const debt = store.orders.filter(r => r.stage !== "Установлен").reduce((s, r) => s + balanceOf(r), 0);
+  $("sum-debt").innerHTML = `${fmtMoney(debt)} <span class="cur">₽</span>`;
+}
+
+/* ---------- Таблица ---------- */
+function currentRows() {
+  const s = SCHEMAS[activeTab];
+  let rows = store[activeTab].slice();
+  if (filterVal) rows = rows.filter(r => (r[s.filterField] || "") === filterVal);
+  if (searchText) { const q = searchText.toLowerCase(); rows = rows.filter(r => Object.values(r).some(v => String(v == null ? "" : v).toLowerCase().includes(q))); }
+  const ss = sortState[activeTab];
+  if (ss) {
+    const col = s.columns.find(c => c.k === ss.key);
+    if (col && col.sort) rows.sort((a, b) => { const av = col.sort(a), bv = col.sort(b); if (av < bv) return ss.dir === "asc" ? -1 : 1; if (av > bv) return ss.dir === "asc" ? 1 : -1; return 0; });
+  } else rows.sort((a, b) => (b._created || 0) - (a._created || 0));
+  return rows;
+}
+function renderTable() {
+  const s = SCHEMAS[activeTab];
+  const ss = sortState[activeTab];
+  const write = canWrite();
+  theadEl.innerHTML = "<tr>" + s.columns.map(c => {
+    const arw = ss && ss.key === c.k ? `<span class="arw">${ss.dir === "asc" ? "▲" : "▼"}</span>` : "";
+    return `<th data-k="${c.k}"${c.sort ? "" : ' class="nosort"'}>${esc(c.label)}${arw}</th>`;
+  }).join("") + (write ? `<th class="nosort" style="text-align:right">Действия</th>` : "") + "</tr>";
+  theadEl.querySelectorAll("th[data-k]").forEach(th => {
+    const k = th.getAttribute("data-k"); const col = s.columns.find(c => c.k === k);
+    if (!col || !col.sort) return;
+    th.onclick = () => { const cur = sortState[activeTab]; sortState[activeTab] = (cur && cur.key === k) ? { key: k, dir: cur.dir === "asc" ? "desc" : "asc" } : { key: k, dir: "asc" }; renderTable(); };
+  });
+  const rows = currentRows();
+  if (!store[activeTab].length) { showState(s.empty.h, s.empty.p, activeTab, !write && activeTab === "catalog"); return; }
+  if (!rows.length) { showState("Ничего не найдено", "Измените запрос или сбросьте фильтр.", "search", false); return; }
+  stateEl.hidden = true; $("table").style.display = "";
+  tbodyEl.innerHTML = rows.map(r => {
+    const rc = s.rowClass ? s.rowClass(r) : "";
+    const cells = s.columns.map(c => `<td class="${c.num ? "num" : ""}" data-label="${esc(c.label)}">${c.render(r)}</td>`).join("");
+    const acts = write ? `<td class="actions" data-label="">
+      ${activeTab === "leads" && r.status !== "Переведена в заказ" ? `<button class="btn ghost sm" data-act="toorder" data-id="${r.id}">→ Заказ</button>` : ""}
+      <button class="btn ghost sm" data-act="edit" data-id="${r.id}">Изм.</button>
+      <button class="btn danger sm" data-act="del" data-id="${r.id}">Удал.</button></td>` : "";
+    return `<tr class="${rc}">${cells}${acts}</tr>`;
+  }).join("");
+  tbodyEl.querySelectorAll("button[data-act]").forEach(b => {
+    b.onclick = () => { const id = b.getAttribute("data-id"), act = b.getAttribute("data-act"); if (act === "toorder") leadToOrder(id); else if (act === "del") deleteRow(id, b); else openDrawer(id); };
+  });
+}
+function showState(h, p, icon, showLogin) {
+  $("table").style.display = "none";
+  stateEl.hidden = false;
+  stateEl.innerHTML = `<div class="ico">${stateIcon(icon)}</div><h3>${esc(h)}</h3><p>${esc(p)}</p>` + (showLogin ? `<button class="btn primary" id="state-login">Вход для сотрудников</button>` : "");
+  const sl = $("state-login"); if (sl) sl.onclick = openLogin;
+}
+function stateIcon(name) {
+  const paths = {
+    leads: '<rect x="6" y="4" width="12" height="16" rx="1.5"/><path d="M9 4h6v3H9z"/><path d="M9 11h6M9 15h4"/>',
+    orders: '<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/>',
+    catalog: '<rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/>',
+    off: '<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>'
+  };
+  return `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">${paths[name] || paths.catalog}</svg>`;
+}
+
+/* ---------- Drawer / форма ---------- */
+const drawer = $("drawer"), scrim = $("scrim"), drawerBody = $("drawer-body");
+function fieldControl(f, val) {
+  const id = "f_" + f.k;
+  if (f.type === "textarea") return `<textarea id="${id}" rows="3" placeholder="${esc(f.placeholder || "")}">${esc(val || "")}</textarea>`;
+  if (f.type === "select") return `<select id="${id}"><option value="">—</option>${f.options.map(o => `<option${o === val ? " selected" : ""}>${esc(o)}</option>`).join("")}</select>`;
+  if (f.type === "catalog") return `<select id="${id}" data-catalog="1"><option value="">— не выбрано —</option>${store.catalog.map(c => { const lbl = `${c.sku} — ${c.type || ""} ${c.material || ""} ${c.price ? "(" + fmtMoney(c.price) + " ₽)" : ""}`.trim(); return `<option value="${esc(c.sku)}"${c.sku === val ? " selected" : ""}>${esc(lbl)}</option>`; }).join("")}</select>`;
+  if (f.type === "bool") return `<label class="switch"><input type="checkbox" id="${id}"${val ? " checked" : ""}> <span>${val ? "Да" : "Нет"}</span></label>`;
+  if (f.type === "checks") { formEngraving = Array.isArray(val) ? val.slice() : (val ? String(val).split(",").map(s => s.trim()).filter(Boolean) : []); return `<div class="checkrow" id="${id}">` + f.options.map(o => `<label><input type="checkbox" value="${esc(o)}"${formEngraving.includes(o) ? " checked" : ""}> ${esc(o)}</label>`).join("") + `</div>`; }
+  if (f.type === "balance") return `<div class="balance-note">Остаток к доплате: <b id="${id}">${fmtMoney(0)}</b> ₽<div class="hint">Считается автоматически: сумма − предоплата</div></div>`;
+  const t = f.type === "number" ? "number" : (f.type === "date" ? "date" : (f.type === "tel" ? "tel" : "text"));
+  return `<input id="${id}" type="${t}" value="${esc(val == null ? "" : val)}" placeholder="${esc(f.placeholder || "")}"${f.type === "number" ? ' inputmode="numeric"' : ""}>`;
+}
+function buildForm(rec) {
+  const s = SCHEMAS[activeTab];
+  let html = "";
+  s.fields.forEach(f => { const val = rec[f.k] != null ? rec[f.k] : (f.def ? f.def() : ""); html += `<div class="field"><label for="f_${f.k}">${esc(f.label)}${f.required ? " *" : ""}</label>${fieldControl(f, val)}${f.hint ? `<div class="hint">${esc(f.hint)}</div>` : ""}</div>`; });
+  drawerBody.innerHTML = html;
+  s.fields.filter(f => f.type === "bool").forEach(f => { const el = $("f_" + f.k); if (el) el.onchange = () => { el.nextElementSibling.textContent = el.checked ? "Да" : "Нет"; }; });
+  const totalEl = $("f_total"), prepaidEl = $("f_prepaid"), balEl = $("f_balance");
+  if (balEl) { const upd = () => { balEl.textContent = fmtMoney(Math.max(0, (Number(totalEl.value) || 0) - (Number(prepaidEl.value) || 0))); }; if (totalEl) totalEl.oninput = upd; if (prepaidEl) prepaidEl.oninput = upd; upd(); }
+  const catEl = drawerBody.querySelector('[data-catalog="1"]');
+  if (catEl) catEl.onchange = () => { const c = store.catalog.find(x => x.sku === catEl.value); if (!c) return; if ($("f_material") && c.material) $("f_material").value = c.material; if ($("f_size") && c.size) $("f_size").value = c.size; if ($("f_total") && c.price && !$("f_total").value) { $("f_total").value = (Number(c.price) || 0) + (Number(c.install_price) || 0); if (balEl) balEl.textContent = fmtMoney(Math.max(0, (Number($("f_total").value) || 0) - (Number(prepaidEl && prepaidEl.value) || 0))); } };
+}
+function openDrawer(id, preset) {
+  currentPreset = preset || null;
+  const s = SCHEMAS[activeTab];
+  editing = id ? { id } : null;
+  const rec = id ? (store[activeTab].find(r => r.id === id) || {}) : (preset || {});
+  buildForm(rec);
+  $("drawer-title").textContent = id ? "Изменить · " + s.title.slice(0, -1).toLowerCase() : "Новая · " + s.title.slice(0, -1).toLowerCase();
+  $("drawer-sub").textContent = id ? "Отредактируйте поля и сохраните" : "Заполните поля записи";
+  $("delete-btn").hidden = !id;
+  scrim.classList.add("open"); drawer.classList.add("open");
+  const first = drawerBody.querySelector("input, select, textarea"); if (first) setTimeout(() => first.focus(), 60);
+}
+function closeDrawer() { scrim.classList.remove("open"); drawer.classList.remove("open"); editing = null; currentPreset = null; pendingDelete = false; updateDeleteBtn(); }
+function collectForm() {
+  const s = SCHEMAS[activeTab]; const out = {};
+  s.fields.forEach(f => {
+    if (f.type === "balance") return;
+    const el = $("f_" + f.k); if (!el) return;
+    if (f.type === "bool") out[f.k] = el.checked;
+    else if (f.type === "checks") out[f.k] = Array.from(el.querySelectorAll("input:checked")).map(i => i.value);
+    else if (f.type === "number") out[f.k] = el.value === "" ? "" : Number(el.value);
+    else out[f.k] = el.value.trim();
+  });
+  return out;
+}
+
+/* ---------- Toast ---------- */
+let toastTimer = null;
+function showToast(msg) {
+  let t = $("toast");
+  if (!t) { t = document.createElement("div"); t.id = "toast"; t.style.cssText = "position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:6px;font-size:13px;z-index:70;box-shadow:var(--shadow)"; document.body.appendChild(t); }
+  t.textContent = msg; t.style.opacity = "1"; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.style.opacity = "0"; t.style.transition = "opacity .4s"; }, 2600);
+}
+
+/* ---------- CRUD через Supabase ---------- */
+async function saveRecord() {
+  if (!canWrite() || !sb) return;
+  const s = SCHEMAS[activeTab];
+  const data = collectForm();
+  const req = s.fields.find(f => f.required);
+  if (req && !data[req.k]) { const el = $("f_" + req.k); if (el) { el.focus(); el.style.borderColor = "var(--danger)"; } return; }
+  const leadId = (!editing && currentPreset && currentPreset._fromLead) ? currentPreset._fromLead : null;
+  const btn = $("save-btn"); btn.disabled = true; btn.textContent = "Сохранение…";
+  try {
+    if (editing) { const { error } = await sb.from(activeTab).update({ data }).eq("id", editing.id); if (error) throw error; }
+    else { const { error } = await sb.from(activeTab).insert({ data }); if (error) throw error; }
+    if (leadId) { await sb.from("leads").update({ data: Object.assign({}, (store.leads.find(r => r.id === leadId) || {}), { status: "Переведена в заказ" }, { id: undefined }) }).eq("id", leadId); }
+    await reloadTable(activeTab); if (leadId) await reloadTable("leads");
+    renderAll(); closeDrawer();
+  } catch (e) {
+    showToast(authMsg(e) || "Не удалось сохранить"); btn.disabled = false; btn.textContent = "Сохранить";
+  } finally { btn.disabled = false; btn.textContent = "Сохранить"; }
+}
+let pendingDelete = false;
+function updateDeleteBtn() { $("delete-btn").textContent = pendingDelete ? "Точно удалить?" : "Удалить"; }
+async function onDelete() {
+  if (!editing || !canWrite() || !sb) return;
+  if (!pendingDelete) { pendingDelete = true; updateDeleteBtn(); return; }
+  try { const { error } = await sb.from(activeTab).delete().eq("id", editing.id); if (error) throw error; await reloadTable(activeTab); renderAll(); closeDrawer(); }
+  catch (e) { showToast("Не удалось удалить"); }
+}
+let rowConfirmId = null, rowConfirmTimer = null;
+function resetRowConfirm() { if (rowConfirmTimer) { clearTimeout(rowConfirmTimer); rowConfirmTimer = null; } if (rowConfirmId) { rowConfirmId = null; renderTable(); } }
+function deleteRow(id, btn) {
+  if (!canWrite() || !sb) return;
+  if (rowConfirmId !== id) { if (rowConfirmTimer) clearTimeout(rowConfirmTimer); if (rowConfirmId) renderTable(); rowConfirmId = id; btn.textContent = "Удалить?"; btn.style.fontWeight = "700"; rowConfirmTimer = setTimeout(resetRowConfirm, 3500); return; }
+  clearTimeout(rowConfirmTimer); rowConfirmTimer = null; btn.disabled = true; btn.textContent = "…";
+  sb.from(activeTab).delete().eq("id", id).then(async ({ error }) => { if (error) throw error; rowConfirmId = null; await reloadTable(activeTab); renderAll(); }).catch(() => { btn.disabled = false; rowConfirmId = null; showToast("Не удалось удалить"); renderTable(); });
+}
+async function leadToOrder(id) {
+  const lead = store.leads.find(r => r.id === id); if (!lead) return;
+  activeTab = "orders"; renderAll();
+  openDrawer(null, { date: today(), client: lead.client, phone: lead.phone, material: lead.material, install: lead.install, total: lead.estimate, stage: "Договор", note: `Из заявки от ${fmtDate(lead.date)}${lead.type ? " · " + lead.type : ""}${lead.source ? " · " + lead.source : ""}`, _fromLead: id });
+}
+
+/* ---------- Загрузка данных ---------- */
+function mapRow(r) { return Object.assign({ id: r.id, _created: r.created_at ? new Date(r.created_at).getTime() : 0 }, r.data || {}); }
+async function reloadTable(t) {
+  if (!sb) return;
+  const { data, error } = await sb.from(t).select("*").order("created_at", { ascending: false });
+  if (!error && data) store[t] = data.map(mapRow);
+}
+async function loadAll() { for (const t of visibleTabs()) await reloadTable(t); }
+
+/* ---------- Realtime ---------- */
+let channels = [];
+function unsubscribeAll() { channels.forEach(c => { try { sb.removeChannel(c); } catch (e) {} }); channels = []; }
+function subscribeRealtime() {
+  if (!sb) return;
+  unsubscribeAll();
+  visibleTabs().forEach(t => {
+    const ch = sb.channel("rt_" + t).on("postgres_changes", { event: "*", schema: "public", table: t }, async () => {
+      await reloadTable(t); renderSummary(); renderTabs(); if (t === activeTab) renderTable();
+    }).subscribe();
+    channels.push(ch);
+  });
+}
+
+/* ---------- Auth ---------- */
+const loginEl = $("login");
+function openLogin() { $("login-err").textContent = ""; loginEl.classList.add("open"); setTimeout(() => $("login-email").focus(), 60); }
+function closeLogin() { loginEl.classList.remove("open"); }
+function authMsg(e) {
+  const m = (e && e.message) ? e.message.toLowerCase() : "";
+  if (m.includes("invalid login")) return "Неверный email или пароль";
+  if (m.includes("email not confirmed")) return "Email не подтверждён";
+  if (m.includes("row-level security") || m.includes("permission")) return "Недостаточно прав";
+  return "";
+}
+async function doLogin(e) {
+  e.preventDefault();
+  if (!sb) { $("login-err").textContent = "Сайт ещё не настроен (нет подключения к базе)."; return; }
+  const email = $("login-email").value.trim(), pass = $("login-pass").value;
+  const btn = $("login-submit"); btn.disabled = true; btn.textContent = "Вход…"; $("login-err").textContent = "";
+  const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+  btn.disabled = false; btn.textContent = "Войти";
+  if (error) { $("login-err").textContent = authMsg(error) || "Не удалось войти"; return; }
+  $("login-pass").value = ""; closeLogin();
+}
+async function doLogout() { if (sb) await sb.auth.signOut(); }
+async function onAuthChanged() {
+  renderAuthbar();
+  if (isStaff() && !visibleTabs().includes(activeTab)) activeTab = "leads";
+  if (!isStaff()) activeTab = "catalog";
+  await loadAll(); subscribeRealtime(); renderAll();
+}
+
+/* ---------- Тема ---------- */
+(function themeInit() {
+  let saved = null; try { saved = localStorage.getItem("tkk-theme"); } catch (e) {}
+  if (saved === "dark" || saved === "light") document.documentElement.setAttribute("data-theme", saved);
+  $("theme-btn").addEventListener("click", () => {
+    const cur = document.documentElement.getAttribute("data-theme");
+    const isDark = cur === "dark" || (!cur && matchMedia("(prefers-color-scheme: dark)").matches);
+    const next = isDark ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("tkk-theme", next); } catch (e) {}
+  });
+})();
+
+/* ---------- Общий рендер ---------- */
+function renderAll() { renderAuthbar(); renderTabs(); renderFilter(); renderSummary(); renderTable(); }
+
+/* ---------- События ---------- */
+searchEl.addEventListener("input", () => { searchText = searchEl.value.trim(); renderTable(); });
+filterEl.addEventListener("change", () => { filterVal = filterEl.value; renderTable(); });
+addBtn.addEventListener("click", () => canWrite() && openDrawer(null));
+$("drawer-close").addEventListener("click", closeDrawer);
+$("cancel-btn").addEventListener("click", closeDrawer);
+scrim.addEventListener("click", closeDrawer);
+$("save-btn").addEventListener("click", saveRecord);
+$("delete-btn").addEventListener("click", onDelete);
+$("login-form").addEventListener("submit", doLogin);
+$("login-cancel").addEventListener("click", closeLogin);
+document.addEventListener("keydown", e => { if (e.key === "Escape") { closeDrawer(); closeLogin(); } });
+
+// показывать кнопку «Добавить» только когда можно писать — через переопределение renderFilter
+const _renderFilter = renderFilter;
+renderFilter = function () { _renderFilter(); addBtn.hidden = !canWrite(); };
+
+/* ---------- Старт ---------- */
+async function init() {
+  renderAll();
+  if (!SUPABASE_URL || SUPABASE_URL.indexOf("__") === 0 || !window.supabase) {
+    showState("Сайт ещё не настроен", "Не заданы адрес и ключ базы Supabase. Каталог и вход появятся после настройки подключения.", "off", false);
+    return;
+  }
+  try { sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (e) { sb = null; }
+  if (!sb) { showState("Ошибка подключения", "Не удалось подключиться к базе. Проверьте адрес и ключ Supabase.", "off", false); return; }
+  const { data } = await sb.auth.getSession();
+  session = data ? data.session : null;
+  sb.auth.onAuthStateChange((_e, s) => { session = s; onAuthChanged(); });
+  await loadAll(); subscribeRealtime(); renderAll();
+}
+init();
+</script>
+</body>
+</html>
